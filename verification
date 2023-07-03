@@ -1,0 +1,33 @@
+import brianheuristic
+import brianverifier
+import brianInputRead
+import random
+import timeit
+import glob
+
+summaryFile = open("verificationResults.txt", 'a')
+
+brianOuts = glob.glob("OUTinputs/*")
+cadyOuts = glob.glob("cadyOutputs/*")
+orderedInputs = glob.glob("inputs/*")
+
+for i in range(len(orderedInputs)):
+    brianV = brianverifier.BrianVerifier(orderedInputs[i], brianOuts[i])
+    cadyV = brianverifier.BrianVerifier(orderedInputs[i], cadyOuts[i])
+
+    brianVerified, brianNumClausesValid, brianNumClausesTotal = brianV.verify()
+    cadyVerified, cadyNumClausesValid, cadyNumClausesTotal = cadyV.verify()
+    
+    outString = ""
+    outString += "Input file: " + orderedInputs[i] + ", NumClausesTotal = " + str(brianNumClausesTotal) + ", "
+    outString += "BrianResults = " + str(brianVerified) + ", " + str(brianNumClausesValid) + ", " + "CadyResults = " + str(cadyVerified) + ", " + str(cadyNumClausesValid) + "\n"
+    summaryFile.write(outString)
+
+competitiveFile = open("clausesCompleteComparison.txt", 'a')
+
+for i in range(len(orderedInputs)):
+    brianFile = open(brianOuts[i], 'r')
+    cadyFile = open(cadyOuts[i], 'r')
+    brianStr = "Brian: " + brianOuts[i] + ", " + brianFile.readline() + " --- "
+    cadyStr = "Cady: " + cadyOuts[i] + ", " + cadyFile.readline() + "\n"
+    competitiveFile.write(brianStr + cadyStr)
